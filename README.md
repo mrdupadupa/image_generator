@@ -3,23 +3,27 @@ Generator of images containing geometric shapes based on the skimage image gener
 It was used to generate dataset with 3 classes:
 
 
+Core:
+
+Rectangles:10%, Triangles:10%, Circles:80%
+
 
 Halo:
 
 Rectangles:45%, Triangles:45%, Circles:10%
 
-Core:
-
-Rectangles:10%, Triangles:10%, Circles:80%
 
 Control:
 
 Rectangles:50% Triangles:50%
 
 
-Example of use:
+Example of use (how it was done):
 
 ```
+
+new_list = [i for i in range(15000)]
+
 #Generating images for Core class (circles with 10% triangles and rectangles)
 
 for i in range(len(new_list)):
@@ -31,7 +35,7 @@ for i in range(len(new_list)):
     
 
 
-# Generating images for Halo class (triangles and rectangles with 10% of circles)
+#Generating images for Halo class (triangles and rectangles with 10% of circles)
 
 for i in range(len(new_list)):
 
@@ -42,7 +46,7 @@ for i in range(len(new_list)):
     
 
 
-# Generating images for Control class (triangles and rectangles)
+#Generating images for Control class (triangles and rectangles)
 
 for i in range(len(new_list)):
 
