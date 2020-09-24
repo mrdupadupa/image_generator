@@ -1,28 +1,15 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
 import math
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from datetime import datetime
-from timeit import default_timer as timer
-from multiprocessing import Pool
-
-
-# In[2]:
-
 
 from skimage.draw import (polygon as draw_polygon)
 from skimage.draw import ellipse
 from skimage.draw import (ellipse as draw_ellipse)
 from skimage._shared.utils import warn
-
-
-# In[3]:
 
 
 def draw_disk(center, radius, *, shape=None):
@@ -50,12 +37,7 @@ def draw_disk(center, radius, *, shape=None):
     r, c = center
     return ellipse(r, c, radius, radius, shape)
 
-
 # Generate different masks
-
-# In[4]:
-
-
 
 def _generate_rectangle_mask(point, image, shape, random):
     """Generate a mask for a filled rectangle shape.
@@ -210,7 +192,8 @@ def _generate_triangle_mask(point, image, shape, random):
 
     return triangle, label
 
-# different scenarious description.
+# different scenarious description:
+
 SHAPE_GENERATORS_ALL = dict(
     rectangle=_generate_rectangle_mask,
     triangle=_generate_triangle_mask,
@@ -233,7 +216,6 @@ SHAPE_GENERATORS_C = dict(
 SHAPE_CHOICES_ALL = list(SHAPE_GENERATORS_ALL.values())
 SHAPE_CHOICES_R_T = list(SHAPE_GENERATORS_R_T.values())
 SHAPE_CHOICES_C = list(SHAPE_GENERATORS_C.values())
-#MY_SHAPE_CHOICES = list(.values())
 
 
 def _generate_random_colors(num_colors, num_channels, intensity_range, random):
@@ -246,7 +228,7 @@ def _generate_random_colors(num_colors, num_channels, intensity_range, random):
               for r in intensity_range]
     return np.transpose(colors)
 
-#@jit(target ="cuda", nopython=True)
+
 def random_shapes(image_shape,
                   max_shapes,
                   min_shapes=1,
@@ -308,7 +290,6 @@ def random_shapes(image_shape,
             elif scenario == 'SHAPEGENERATOR_C':
                 shape_generator = random.choice(SHAPE_CHOICES_C)
     
-            #shape_generator = MY_SHAPE_CHOICES
             else:
                 print("Error in the script")
             
@@ -339,122 +320,3 @@ def random_shapes(image_shape,
     if not multichannel:
         image = np.squeeze(image, axis=2)
     return image, labels
-
-
-# In[5]:
-
-
-new_list = [i for i in range(14670)]
-
-
-# synthetic dataset with triangles-only, rectangles-only and circles-only classes
-
-# In[6]:
-
-
-start=timer()
-
-
-def process_image(i):
-    new_list[i], _ = random_shapes((1280, 1280), min_shapes=3, max_shapes=4, min_size=20, allow_overlap=False, shape='rectangle',
-                       multichannel=False)
-
-    plt.imshow(new_list[i])
-    matplotlib.image.imsave("/lustre/ssd/ws/anpo879a-master_thesis/master_thesis/data_set3_pureclasses/rectangles/%s.png" % ((i)), 
-                            new_list[i], cmap="Greys")
-    
-if __name__ == '__main__':
-    p = Pool()                        
-    p.map(process_image, range(len(new_list)))
-
-    
-print("time for parallel code:", timer()-start)
-
-
-# In[12]:
-
-
-start=timer()
-
-
-def process_image(i):
-    new_list[i], _ = random_shapes((1280, 1280), min_shapes=3, max_shapes=4, min_size=20, allow_overlap=False, shape='triangle',
-                       multichannel=False)
-
-    plt.imshow(new_list[i])
-    matplotlib.image.imsave("/lustre/ssd/ws/anpo879a-master_thesis/master_thesis/data_set3_pureclasses/triangles/%s.png" % ((i)), 
-                            new_list[i], cmap="Greys")
-    
-if __name__ == '__main__':
-    p = Pool()                        
-    p.map(process_image, range(len(new_list)))
-
-    
-print("time for parallel code:", timer()-start)
-
-
-# In[13]:
-
-
-start=timer()
-
-
-def process_image(i):
-    new_list[i], _ = random_shapes((1280, 1280), min_shapes=3, max_shapes=4, min_size=20, allow_overlap=False, shape='circle',
-                       multichannel=False)
-
-    plt.imshow(new_list[i])
-    matplotlib.image.imsave("/lustre/ssd/ws/anpo879a-master_thesis/master_thesis/data_set3_pureclasses/circles/%s.png" % ((i)), 
-                            new_list[i], cmap="Greys")
-    
-if __name__ == '__main__':
-    p = Pool()                        
-    p.map(process_image, range(len(new_list)))
-
-    
-print("time for parallel code:", timer()-start)
-
-
-# second synthetic dataset imitates original HZDR dataset
-
-# Generating images for Core class (circles with 10-20% triangles and rectangles)
-
-# In[ ]:
-
-
-for i in range(len(new_list)):
-
-    new_list[i], _ = random_shapes((1280, 1280), min_shapes=3, max_shapes=4, min_size=20, scenario='SHAPEGENERATOR_ALL_CORE', allow_overlap=False, multichannel=False)
-    
-    plt.imshow(new_list[i])
-    matplotlib.image.imsave("/lustre/ssd/ws/anpo879a-master_thesis/master_thesis/data_set2/quasi_core/%s.png" % ((i)), new_list[i], cmap="Greys")
-    
-
-
-# Generatin images for Halo class (triangles and rectangles with 10-20% of circles)
-
-# In[ ]:
-
-
-for i in range(len(new_list)):
-
-    new_list[i], _ = random_shapes((1280, 1280), min_shapes=3, max_shapes=4, min_size=20, scenario='SHAPEGENERATOR_ALL_HALO', allow_overlap=False, multichannel=False)
-    
-    plt.imshow(new_list[i])
-    matplotlib.image.imsave("/lustre/ssd/ws/anpo879a-master_thesis/master_thesis/data_set2/quasi_halo/%s.png" % ((i)), new_list[i], cmap="Greys")
-    
-
-
-# Generatin images for Control class (triangles and rectangles)
-
-# In[ ]:
-
-
-for i in range(len(new_list)):
-
-    new_list[i], _ = random_shapes((1280, 1280), min_shapes=3, max_shapes=4, min_size=20, scenario='SHAPEGENERATOR_R_T', allow_overlap=False, multichannel=False)
-    
-    plt.imshow(new_list[i])
-    matplotlib.image.imsave("/lustre/ssd/ws/anpo879a-master_thesis/master_thesis/data_set2/quasi_control/%s.png" % ((i)), new_list[i], cmap="Greys")
-    
-
