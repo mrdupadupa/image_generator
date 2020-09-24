@@ -1,4 +1,4 @@
-# image_generator
+# Generator of images with geometric shapes
 Generator of images containing geometric shapes based on the skimage image generator.
 It was used to generate dataset with 3 classes:
 
