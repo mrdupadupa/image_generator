@@ -18,7 +18,11 @@ Control:
 Rectangles:50% Triangles:50%
 
 
+
+
 Requirements: numpy, matplotlib, skimage
+
+
 
 
 Example of use (how it was done):
