@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import os
+from pathlib import Path
+
 import math
 import numpy as np
 import matplotlib
@@ -323,7 +326,13 @@ def random_shapes(image_shape,
 
 if __name__ == "__main__":
 
-    new_list = [i for i in range(15000)]
+    new_list = [i for i in range(12000)]
+    home = str(Path.home())
+    print(home)
+    directory = "/test_data"
+    path = home + directory
+    print (path)
+    os.mkdir(path)
 
 #Generating images for Core class (circles with 10% triangles and rectangles)
 
@@ -332,4 +341,4 @@ if __name__ == "__main__":
         new_list[i], _ = random_shapes((1280, 1280), min_shapes=3, max_shapes=4, min_size=20, scenario='SHAPEGENERATOR_ALL_CORE', allow_overlap=False, multichannel=False)
 
         plt.imshow(new_list[i])
-        matplotlib.image.imsave("/home/andrei/Work/new_practicies_in_work/CI_CD/test_data/%s.png" % ((i)), new_list[i], cmap="Greys")
+        matplotlib.image.imsave(path + "/%s.png" % ((i)), new_list[i], cmap="Greys")
