@@ -1,9 +1,17 @@
-# Firefox over VNC
+# Gemerator of images with  geometric shapes
 #
 # VERSION               0.1
-# DOCKER-VERSION        0.2
+# DOCKER-VERSION        0.3
 
-from	ubuntu:latest
-# make sure the package repository is up to date
-#run	echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
-run	apt-get update
+# syntax=docker/dockerfile:1
+
+FROM python:3.10-slim-buster
+
+WORKDIR image_generator
+
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
+
+COPY . .
+
+CMD [ "python", "image_generator_complex_scenarious.py"]
