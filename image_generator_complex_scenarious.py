@@ -320,3 +320,16 @@ def random_shapes(image_shape,
     if not multichannel:
         image = np.squeeze(image, axis=2)
     return image, labels
+
+if __name__ == "__main__":
+
+    new_list = [i for i in range(15000)]
+
+#Generating images for Core class (circles with 10% triangles and rectangles)
+
+    for i in range(len(new_list)):
+
+        new_list[i], _ = random_shapes((1280, 1280), min_shapes=3, max_shapes=4, min_size=20, scenario='SHAPEGENERATOR_ALL_CORE', allow_overlap=False, multichannel=False)
+
+        plt.imshow(new_list[i])
+        matplotlib.image.imsave("/home/andrei/Work/new_practicies_in_work/CI_CD/test_data/%s.png" % ((i)), new_list[i], cmap="Greys")
