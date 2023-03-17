@@ -326,11 +326,10 @@ def random_shapes(image_shape,
 
 if __name__ == "__main__":
 
-    new_list = [i for i in range(12000)]
-    home = str(Path.home())
-    print(home)
-    directory = "/test_data"
-    path = home + directory
+    new_list = [i for i in range(15000)]
+    #home = str(Path.home())
+    #directory = "/test_data"
+    path = (str(Path.home())) + "/test_data"
     print (path)
     os.mkdir(path)
 
