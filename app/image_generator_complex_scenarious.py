@@ -3,6 +3,7 @@
 
 import os
 from pathlib import Path
+import argparse
 
 import math
 import numpy as np
@@ -14,6 +15,9 @@ from skimage.draw import ellipse
 from skimage.draw import (ellipse as draw_ellipse)
 from skimage._shared.utils import warn
 
+parser = argparse.ArgumentParser(description="List fish in aquarium.")
+parser.add_argument("tank", type=str)
+args = parser.parse_args()
 
 def draw_disk(center, radius, *, shape=None):
     """Generate coordinates of pixels within circle.
