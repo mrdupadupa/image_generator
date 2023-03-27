@@ -15,9 +15,12 @@ from skimage.draw import ellipse
 from skimage.draw import (ellipse as draw_ellipse)
 from skimage._shared.utils import warn
 
-parser = argparse.ArgumentParser(description="List fish in aquarium.")
-parser.add_argument("tank", type=str)
+parser = argparse.ArgumentParser(description="circles with 10% triangles and rectangles")
+#parser.add_argument("core", type=str, help="circles with 10% triangles and rectangles")
+#parser.add_argument("halo", type=str, help="")
+parser.add_argument("--types", type=str, choices=["control", "halo", "core"], help="")
 args = parser.parse_args()
+
 
 def draw_disk(center, radius, *, shape=None):
     """Generate coordinates of pixels within circle.
@@ -43,6 +46,7 @@ def draw_disk(center, radius, *, shape=None):
     """
     r, c = center
     return ellipse(r, c, radius, radius, shape)
+
 
 # Generate different masks
 
@@ -199,26 +203,27 @@ def _generate_triangle_mask(point, image, shape, random):
 
     return triangle, label
 
+
 # different scenarious description:
 
 SHAPE_GENERATORS_ALL = dict(
     rectangle=_generate_rectangle_mask,
     triangle=_generate_triangle_mask,
     circle=_generate_circle_mask
-    #ellipse=_generate_ellipse_mask
-    )
+    # ellipse=_generate_ellipse_mask
+)
 SHAPE_GENERATORS_R_T = dict(
     rectangle=_generate_rectangle_mask,
-    #circle=_generate_circle_mask,
+    # circle=_generate_circle_mask,
     triangle=_generate_triangle_mask
-    #ellipse=_generate_ellipse_mask
-    )
+    # ellipse=_generate_ellipse_mask
+)
 SHAPE_GENERATORS_C = dict(
-    #rectangle=_generate_rectangle_mask,
+    # rectangle=_generate_rectangle_mask,
     circle=_generate_circle_mask
-    #triangle=_generate_triangle_mask,
-    #ellipse=_generate_ellipse_mask
-    )
+    # triangle=_generate_triangle_mask,
+    # ellipse=_generate_ellipse_mask
+)
 
 SHAPE_CHOICES_ALL = list(SHAPE_GENERATORS_ALL.values())
 SHAPE_CHOICES_R_T = list(SHAPE_GENERATORS_R_T.values())
@@ -226,12 +231,11 @@ SHAPE_CHOICES_C = list(SHAPE_GENERATORS_C.values())
 
 
 def _generate_random_colors(num_colors, num_channels, intensity_range, random):
-       
     if num_channels == 1:
-        intensity_range = (intensity_range, )
+        intensity_range = (intensity_range,)
     elif len(intensity_range) == 1:
         intensity_range = intensity_range * num_channels
-    colors = [random.randint(r[0], r[1]+1, size=num_colors)
+    colors = [random.randint(r[0], r[1] + 1, size=num_colors)
               for r in intensity_range]
     return np.transpose(colors)
 
@@ -245,13 +249,11 @@ def random_shapes(image_shape,
                   num_channels=3,
                   shape=None,
                   scenario='SHAPEGENERATOR_ALL_HALO',
-                  #my_shape_list=[1,2,3]
+                  # my_shape_list=[1,2,3]
                   intensity_range=None,
                   allow_overlap=False,
                   num_trials=100,
                   random_seed=None):
-        
-    
     if min_size > image_shape[0] or min_size > image_shape[1]:
         raise ValueError('Minimum dimension must be less than ncols and nrows')
     max_size = max_size or max(image_shape[0], image_shape[1])
@@ -260,9 +262,9 @@ def random_shapes(image_shape,
         num_channels = 1
 
     if intensity_range is None:
-        intensity_range = (0, 254) if num_channels == 1 else ((0, 254), )
+        intensity_range = (0, 254) if num_channels == 1 else ((0, 254),)
     else:
-        tmp = (intensity_range, ) if num_channels == 1 else intensity_range
+        tmp = (intensity_range,) if num_channels == 1 else intensity_range
         for intensity_pair in tmp:
             for intensity in intensity_pair:
                 if not (0 <= intensity <= 255):
@@ -271,35 +273,35 @@ def random_shapes(image_shape,
 
     random = np.random.RandomState(random_seed)
     user_shape = shape
-    #shape_list = 
+    # shape_list =
     image_shape = (image_shape[0], image_shape[1], num_channels)
     image = np.full(image_shape, 255, dtype=np.uint8)
     filled = np.zeros(image_shape, dtype=bool)
     labels = []
 
     num_shapes = random.randint(min_shapes, max_shapes + 1)
-    
+
     colors = _generate_random_colors(num_shapes, num_channels,
                                      intensity_range, random)
     for shape_idx in range(num_shapes):
         if user_shape is None:
-    
-    #run differen scenarious, two of them with probability as well
+
+            # run differen scenarious, two of them with probability as well
             if scenario == 'SHAPEGENERATOR_ALL_HALO':
                 shape_generator = random.choice(SHAPE_CHOICES_ALL, p=[0.45, 0.45, 0.1])
-    
+
             elif scenario == 'SHAPEGENERATOR_ALL_CORE':
                 shape_generator = random.choice(SHAPE_CHOICES_ALL, p=[0.1, 0.1, 0.8])
-    #rectangles and triangles
+            # rectangles and triangles
             elif scenario == 'SHAPEGENERATOR_R_T':
                 shape_generator = random.choice(SHAPE_CHOICES_R_T)
-    #only circles
+            # only circles
             elif scenario == 'SHAPEGENERATOR_C':
                 shape_generator = random.choice(SHAPE_CHOICES_C)
-    
+
             else:
                 print("Error in the script")
-            
+
         else:
             shape_generator = SHAPE_GENERATORS_ALL[user_shape]
         shape = (min_size, max_size)
@@ -328,20 +330,41 @@ def random_shapes(image_shape,
         image = np.squeeze(image, axis=2)
     return image, labels
 
+
 if __name__ == "__main__":
 
     new_list = [i for i in range(15000)]
-    #home = str(Path.home())
-    #directory = "/test_data"
+    # home = str(Path.home())
+    # directory = "/test_data"
     path = (str(Path.home())) + "/test_data"
-    print (path)
+    print(path)
     os.mkdir(path)
 
-#Generating images for Core class (circles with 10% triangles and rectangles)
+    # Generating images for Core class (circles with 10% triangles and rectangles)
+
 
     for i in range(len(new_list)):
 
-        new_list[i], _ = random_shapes((1280, 1280), min_shapes=3, max_shapes=4, min_size=20, scenario='SHAPEGENERATOR_ALL_CORE', allow_overlap=False, multichannel=False)
+        if args.types == "core":
 
-        plt.imshow(new_list[i])
-        matplotlib.image.imsave(path + "/%s.png" % ((i)), new_list[i], cmap="Greys")
+            new_list[i], _ = random_shapes((1280, 1280), min_shapes=3, max_shapes=4, min_size=20,
+                                       scenario='SHAPEGENERATOR_ALL_CORE', allow_overlap=False, multichannel=False)
+
+            plt.imshow(new_list[i])
+            matplotlib.image.imsave(path + "/%s.png" % ((i)), new_list[i], cmap="Greys")
+
+        elif args.types == "halo":
+            new_list[i], _ = random_shapes((1280, 1280), min_shapes=3, max_shapes=4, min_size=20, scenario='SHAPEGENERATOR_ALL_HALO', allow_overlap=False, multichannel=False)
+
+            plt.imshow(new_list[i])
+            matplotlib.image.imsave(path + "/%s.png" % ((i)), new_list[i], cmap="Greys")
+
+        elif args.types == "control":
+            new_list[i], _ = random_shapes((1280, 1280), min_shapes=3, max_shapes=4, min_size=20, scenario='SHAPEGENERATOR_R_T', allow_overlap=False, multichannel=False)
+
+            plt.imshow(new_list[i])
+            matplotlib.image.imsave(path + "/%s.png" % ((i)), new_list[i], cmap="Greys")
+
+        else:
+            print("choose one of the options")
+
